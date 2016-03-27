@@ -1,0 +1,40 @@
+这个问题有两个方法，一个是贪心和动态规划。
+贪心方法时间复杂度为O（N）。
+动态规划方法的时间复杂度为为O（n^2）。
+
+// version 1: Dynamic Programming
+public class Solution {
+    public boolean canJump(int[] A) {
+        boolean[] can = new boolean[A.length];
+        can[0] = true;
+        
+        for (int i = 1; i < A.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (can[j] && j + A[j] >= i) {
+                    can[i] = true;
+                    break;
+                }
+            }
+        }
+        
+        return can[A.length - 1];
+    }
+}
+
+
+// version 2: Greedy
+public class Solution {
+    public boolean canJump(int[] A) {
+        // think it as merging n intervals
+        if (A == null || A.length == 0) {
+            return false;
+        }
+        int farthest = A[0];
+        for (int i = 1; i < A.length; i++) {
+            if (i <= farthest && A[i] + i >= farthest) {
+                farthest = A[i] + i;
+            }
+        }
+        return farthest >= A.length - 1;
+    }
+}
