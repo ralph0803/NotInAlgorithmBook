@@ -1,3 +1,12 @@
+文／Jason_Yuan（简书作者）
+原文链接：http://www.jianshu.com/p/db2738813e51
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+解题思路
+二分查找
+由于有重复数字时，返回第一个出现的index，所以A[mid] == target时，end = mid
+由于数组非常大，所以我们希望用一种方式找到刚刚好比target大一些的数作为end
+
 /**
  * Definition of ArrayReader:
  * 
