@@ -1,0 +1,55 @@
+// 从列从行遍历，对于每一个值，与它的上一行的一个或两个数相加。
+// 从行来看，边界都要拿出来考虑，所以有两个if。
+
+public class Solution {
+    /**
+     * @param triangle: a list of lists of integers.
+     * @return: An integer, minimum path sum.
+     */
+    public int minimumTotal(ArrayList<ArrayList<Integer>> triangle) {
+        // write your code here
+        
+        if (triangle == null || triangle.size() == 0) {
+            return 0;
+        } else {
+            for (int i = 0; i < triangle.size(); i++) {
+                if (triangle.get(i) == null || triangle.get(i).size() == 0) {
+                    return 0;
+                }
+                if (i > 0) {
+                    if (triangle.get(i).size() != (triangle.get(i-1).size() + 1)) {
+                        return 0;
+                    }
+                }
+            }
+        }
+        
+        int result = triangle.get(0).get(0);
+        
+        for (int i = 0; i < triangle.size(); i++) {
+            for (int j = 0; j < triangle.get(i).size(); j++) {
+                if (i > 0) {
+                    if (j == 0) {
+                        triangle.get(i).set(j,triangle.get(i-1).get(j) + triangle.get(i).get(j));
+                        if (i == triangle.size()-1) {
+                            result = triangle.get(i).get(j);
+                        }
+                    } else if (j == triangle.get(i).size()-1) {
+                        triangle.get(i).set(j,triangle.get(i-1).get(j-1) + triangle.get(i).get(j));
+                        if (i == triangle.size()-1) {
+                            result = result <= triangle.get(i).get(j) ? result : triangle.get(i).get(j);
+                        }
+                    } else {
+                        int tmp = triangle.get(i-1).get(j-1) <= triangle.get(i-1).get(j) ? triangle.get(i-1).get(j-1) : triangle.get(i-1).get(j);
+                        triangle.get(i).set(j, tmp + triangle.get(i).get(j));
+                        if (i == triangle.size()-1) {
+                            result = result <= triangle.get(i).get(j) ? result : triangle.get(i).get(j);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+}
