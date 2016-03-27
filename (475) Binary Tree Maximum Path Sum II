@@ -1,0 +1,35 @@
+本题属于中等偏难的那一类题。题目很短，要求返回最大路径和。咋看
+一下感觉使用递归应该很快就能搞定，实则不然，因为从题目来看路径和中不一定包含根节点！也就是说
+可以起止于树中任一连通节点。
+弄懂题意后我们就来剖析剖析，本着由简入难的原则，我们先来分析若路径和包含根节点，如何才能使其
+路径和达到最大呢？选定根节点后，路径和中必然包含有根节点的值，剩下的部分则为左子树和右子树，
+要使路径和最大，则必然要使左子树和右子树中的路径长度都取最大。
+
+但此解法强制包括了根结点。。。
+
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+public class Solution {
+    /**
+     * @param root the root of binary tree.
+     * @return an integer
+     */
+    public int maxPathSum2(TreeNode root) {
+        if (root == null) {
+            return Integer.MIN_VALUE;
+        }
+        
+        int left = maxPathSum2(root.left);
+        int right = maxPathSum2(root.right);
+        return root.val + Math.max(0, Math.max(left, right));
+    }
+}
