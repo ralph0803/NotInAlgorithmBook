@@ -1,0 +1,80 @@
+// Version 1: without ResultType
+首先可以确
+定 abs(leftDepth - rightDepth) > 1 肯定是需要特殊处理的，如果返回 -1 呢？咋一看似乎在下一步返
+回 max(leftDepth, rightDepth) + 1 时会出错，再进一步想想，我们能否不让 max... 这一句执行呢？
+如果返回了 -1 ，其接盘侠必然是 leftDepth 或者 rightDepth 中的一个，因此我们只需要在判断子树高
+度差大于1的同时也判断下左右子树深度是否为 -1 即可都返回 -1 ，不得不说这种处理方法要精妙的多，
+赞！
+
+public class Solution {
+    public boolean isBalanced(TreeNode root) {
+        return maxDepth(root) != -1;
+    }
+
+    private int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        int left = maxDepth(root.left);
+        int right = maxDepth(root.right);
+        if (left == -1 || right == -1 || Math.abs(left-right) > 1) {
+            return -1;
+        }
+        // 递归一步步增加树高
+        return Math.max(left, right) + 1;
+    }
+}
+
+// Version 2: with ResultType 分治
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+
+class ResultType {
+    public boolean isBalanced;
+    public int maxDepth;
+    public ResultType(boolean isBalanced, int maxDepth) {
+        this.isBalanced = isBalanced;
+        this.maxDepth = maxDepth;
+    }
+}
+
+public class Solution {
+    /**
+     * @param root: The root of binary tree.
+     * @return: True if this Binary tree is Balanced, or false.
+     */
+    public boolean isBalanced(TreeNode root) {
+        return helper(root).isBalanced;
+    }
+    
+    private ResultType helper(TreeNode root) {
+        if (root == null) {
+            return new ResultType(true, 0);
+        }
+        
+        ResultType left = helper(root.left);
+        ResultType right = helper(root.right);
+        
+        // subtree not balance
+        if (!left.isBalanced || !right.isBalanced) {
+            return new ResultType(false, -1);
+        }
+        
+        // root not balance
+        if (Math.abs(left.maxDepth - right.maxDepth) > 1) {
+            return new ResultType(false, -1);
+        }
+        
+        return new ResultType(true, Math.max(left.maxDepth, right.maxDepth) + 1);
+    }
+}
