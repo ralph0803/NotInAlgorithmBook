@@ -1,0 +1,54 @@
+首先来看看使用动态规划的解法，由于复杂度较高在A元素较多时会出现TLE，因为时间复杂度接近
+O(n ). 工作面试中给出动规的实现就挺好了。
+1. State: f[i] 从起点跳到这个位置最少需要多少步
+2. Function: f[i] = MIN(f[j]+1, j < i && j + A[j] >= i) 取出所有能从j到i中的最小值
+3. Initialization: f[0] = 0，即一个元素时不需移位即可到达
+4. Answer: f[n-1]
+
+其中break即体现了MIN操作，最开始满足条件的j即为最小步数。
+
+// version 1: Dynamic Programming
+public class Solution {
+    public int jump(int[] A) {
+        int[] steps = new int[A.length];
+        
+        steps[0] = 0;
+        for (int i = 1; i < A.length; i++) {
+            steps[i] = Integer.MAX_VALUE;
+            for (int j = 0; j < i; j++) {
+                if (steps[j] != Integer.MAX_VALUE && j + A[j] >= i) {
+                    steps[i] = steps[j] + 1;
+                    break;
+                }
+            }
+        }
+        
+        return steps[A.length - 1];
+    }
+}
+
+自顶向下使用 farthest 记录当前坐标出发能
+到达的最远坐标，遍历当前 start 与 end 之间的坐标，若 i+A[i] > farthest 时更新 farthest (寻找最
+小跳数)，当前循环遍历结束时递推 end = farthest 。 end >= A.size() - 1 时退出循环，返回最小跳
+数。
+// version 2: Greedy
+public class Solution {
+    public int jump(int[] A) {
+        if (A == null || A.length == 0) {
+            return -1;
+        }
+        int start = 0, end = 0, jumps = 0;
+        while (end < A.length - 1) {
+            jumps++;
+            int farthest = end;
+            for (int i = start; i <= end; i++) {
+                if (A[i] + i > farthest) {
+                    farthest = A[i] + i;
+                }
+            }
+            start = end + 1;
+            end = farthest;
+        }
+        return jumps;
+    }
+}
