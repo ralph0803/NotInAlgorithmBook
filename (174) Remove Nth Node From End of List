@@ -1,0 +1,52 @@
+/**
+ * Definition for ListNode.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int val) {
+ *         this.val = val;
+ *         this.next = null;
+ *     }
+ * }
+ */ 
+public class Solution {
+    /**
+     * @param head: The first node of linked list.
+     * @param n: An integer.
+     * @return: The head of linked list.
+     */
+    ListNode removeNthFromEnd(ListNode head, int n) {
+        // write your code here
+        // the list has only one element
+        if (head == null || head.next == null) {
+            return null;
+        }
+        
+        // calcualte the length
+        int len = 0;
+        ListNode tmp = head;
+        for (int i = 0; tmp != null; i++) {
+            len++;
+            tmp = tmp.next;
+        }
+        
+        // deal with the first node case
+        if (n == len) {
+            return head.next;
+        }
+        
+        // deal with the non-first node case
+        int fromStart = len - n;
+        tmp = head;
+        int i = 0;
+        while(tmp != null){
+            i++;
+            if(i == fromStart){
+                tmp.next = tmp.next.next;
+            }
+            tmp = tmp.next;
+        }
+        return head;
+    }
+    
+}
