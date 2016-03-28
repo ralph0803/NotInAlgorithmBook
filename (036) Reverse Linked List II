@@ -1,0 +1,43 @@
+此题在上题的基础上加了位置要求， 只翻转指定区域的链表。 由于链表头节点不确定， 祭出我们的dummy
+杀器。 此题边界条件处理特别tricky， 需要特别注意。
+
+1. 由于只翻转指定区域， 分析受影响的区域为第m-1个和第n+1个节点
+2. 找到第m个节点， 使用for循环n-m次， 使用上题中的链表翻转方法
+3. 处理第m-1个和第n+1个节点
+4. 返回dummy->next
+
+public class Solution {
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (m >= n || head == null) {
+            return head;
+        }
+        
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        head = dummy;
+        
+        for (int i = 1; i < m; i++) {
+            if (head == null) {
+                return null;
+            }
+            head = head.next;
+        }
+        
+        ListNode premNode = head;
+        ListNode mNode = head.next;
+        ListNode nNode = mNode, postnNode = mNode.next;
+        for (int i = m; i < n; i++) {
+            if (postnNode == null) {
+                return null;
+            }
+            ListNode temp = postnNode.next;
+            postnNode.next = nNode;
+            nNode = postnNode;
+            postnNode = temp;
+        }
+        mNode.next = postnNode;
+        premNode.next = nNode;
+        
+        return dummy.next;
+    }
+}
