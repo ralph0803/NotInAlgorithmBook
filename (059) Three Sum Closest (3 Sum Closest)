@@ -1,0 +1,35 @@
+排序 + 2 Sum + 两根指针 + 优化过滤
+和 3 Sum 的思路接近， 首先对原数组排序， 随后将3 Sum 的题拆解为『 1 Sum + 2 Sum』 的题， 对于
+Closest 的题使用两根指针而不是哈希表的方法较为方便。 
+相比之前的 2 Sum, 3 Sum 又多加了一个数， 按照之前 2 Sum 的分解为『 1 Sum + 1 Sum』 的思路， 我们
+同样可以将 3 Sum 分解为『 1 Sum + 2 Sum』 的问题， 具体就是首先对原数组排序， 排序后选出第一个元
+素， 随后在剩下的元素中使用 2 Sum 的解法。
+对于有序数组来说，在查找 Cloest 的值时其实是有较大的优化空间的。
+
+public class Solution {
+	public int threeSumClosest(int[] num, int target) {
+		// Note: The Solution object is instantiated only once and is reused by
+		// each test case.
+		if (num == null || num.length < 3) {
+			return Integer.MAX_VALUE;
+		}
+		Arrays.sort(num);
+		int closet = Integer.MAX_VALUE / 2; // otherwise it will overflow for opeartion (closet-target)'
+		for (int i = 0; i < num.length - 2; i++) {
+			int left = i + 1;
+			int right = num.length - 1;
+			while (left < right) {
+				int sum = num[i] + num[left] + num[right];
+				if (sum == target) {
+					return sum;
+				} else if (sum < target) {
+					left++;
+				} else {
+					right--;
+				}
+				closet = Math.abs(sum - target) < Math.abs(closet - target) ? sum : closet;
+			}
+		}
+		return closet;
+	}
+}
