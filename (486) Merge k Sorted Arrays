@@ -1,0 +1,68 @@
+将 k 个排序数组合并为一个大的排序数组。
+由Merge k sorted list启发。用PriorityQueue,存那k个首发element。
+PriorityQueue需要存储单位。自己建一个Class Node 存val, x,y index.    
+因为array里没有 'next' pointer，只能存x,y来推next element
+
+文／偷天神猫（简书作者）
+原文链接：http://www.jianshu.com/p/6c78038bb48d
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+解题思路：利用最小堆这种数据结构，我们首先把k个链表的首元素都加入最小堆中，
+它们会自动排好序。然后我们每次取出最小的那个元素加入我们最终结果的链表中，
+然后把刚刚被取出元素的那个链表的下一个元素再加入堆中，
+下次仍从堆中取出最小的元素做相同的操作，以此类推，直到堆中没有元素了，
+此时k个链表也合并为了一个链表，返回首节点即可，
+注意head(存储最终结果的链表头)跟heap(最小堆)不要混淆。
+
+class Element {
+    public int row, col, val;
+    Element(int row, int col, int val) {
+        this.row = row;
+        this.col = col;
+        this.val = val;
+    }
+}
+
+public class Solution {
+    private Comparator<Element> ElementComparator = new Comparator<Element>() {
+        public int compare(Element left, Element right) {
+            return left.val - right.val;
+        }
+    };
+    
+    /**
+     * @param arrays k sorted integer arrays
+     * @return a sorted array
+     */
+    public int[] mergekSortedArrays(int[][] arrays) {
+        if (arrays == null) {
+            return new int[0];
+        }
+        
+        int total_size = 0;
+        Queue<Element> Q = new PriorityQueue<Element>(
+            arrays.length, ElementComparator);
+            
+        for (int i = 0; i < arrays.length; i++) {
+            if (arrays[i].length > 0) {
+                Element elem = new Element(i, 0, arrays[i][0]);
+                Q.add(elem);
+                total_size += arrays[i].length;
+            }
+        }
+        
+        int[] result = new int[total_size];
+        int index = 0;
+        while (!Q.isEmpty()) {
+            Element elem = Q.poll();
+            result[index++] = elem.val;
+            if (elem.col + 1 < arrays[elem.row].length) {
+                elem.col += 1;
+                elem.val = arrays[elem.row][elem.col];
+                Q.add(elem);
+            }
+        }
+        
+        return result;
+    }
+}
