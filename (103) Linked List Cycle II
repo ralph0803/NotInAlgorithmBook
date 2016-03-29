@@ -1,0 +1,30 @@
+给定一个链表，如果链表中存在环，则返回到链表中环的起始节点的值，如果没有环，返回null。
+挑战
+不使用额外的空间
+
+tricky的地方在第二个while，head从头一个个走，正好等于慢指针从快慢指针交汇处一个个走，
+head指针和慢指针可以在环开始的地方交汇
+
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+        if (head == null || head.next==null) {
+            return null;
+        }
+
+        ListNode fast, slow;
+        fast = head.next;
+        slow = head;
+        while (fast != slow) {
+            if(fast==null || fast.next==null)
+                return null;
+            fast = fast.next.next;
+            slow = slow.next;
+        } 
+        
+        while (head != slow.next) {
+            head = head.next;
+            slow = slow.next;
+        }
+        return head;
+    }
+}
