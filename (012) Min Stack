@@ -1,0 +1,65 @@
+文／Jason_Yuan（简书作者）
+原文链接：http://www.jianshu.com/p/344a3f24fa54
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+解题思路
+使用两个stack实现， 一个stack正常存储数值，另一个stack存储每次的最小值（保存最小值的变化序列）
+
+// version 1:
+public class MinStack {
+    private Stack<Integer> stack;
+    private Stack<Integer> minStack;
+    
+    public MinStack() {
+        stack = new Stack<Integer>();
+        minStack = new Stack<Integer>();
+    }
+
+    public void push(int number) {
+        stack.push(number);
+        if (minStack.isEmpty()) {
+            minStack.push(number);
+        } else {
+            minStack.push(Math.min(number, minStack.peek()));
+        }
+    }
+
+    public int pop() {
+        minStack.pop();
+        return stack.pop();
+    }
+
+    public int min() {
+        return minStack.peek();
+    }
+}
+
+// version 2, save more space. but space complexity doesn't change.
+public class MinStack {
+    private Stack<Integer> stack;
+    private Stack<Integer> minStack;
+
+    public MinStack() {
+        stack = new Stack<Integer>();
+        minStack = new Stack<Integer>();
+    }
+
+    public void push(int number) {
+        stack.push(number);
+        if (minStack.empty() == true)
+            minStack.push(number);
+        else
+        if (Integer.parseInt(minStack.peek().toString()) >= number)
+            minStack.push(number);
+    }
+
+    public int pop() {
+        if (stack.peek().equals(minStack.peek()) ) 
+            minStack.pop();
+        return stack.pop();
+    }
+
+    public int min() {
+        return minStack.peek();
+    }
+}
