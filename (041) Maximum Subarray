@@ -1,4 +1,4 @@
-// Version 1: Greedy
+// Version 1: Greedy sum不到0的统统pass，只有>=0的时候才予考虑！
 
 public class Solution {
     public int maxSubArray(int[] A) {
