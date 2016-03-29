@@ -1,0 +1,63 @@
+除了使用哈希表， 我们还可使用排序的方法找到两个子串和相等的情况。 这种方法的时间复杂度主要集中
+在排序方法的实现。 由于除了记录子串和之外还需记录索引， 故引入 pair 记录索引， 最后排序时先按
+照 sum 值来排序， 然后再按照索引值排序。 
+
+由于要求的子串和不一定， 故哈希表的方法不再适用， 使用排序即可在 O(nlog n) 内解决。
+
+1. 首先遍历一次数组求得子串和。
+2. 对子串和排序。
+3. 逐个比较相邻两项差值的绝对值， 返回差值绝对值最小的两项。
+
+class Pair {
+    int sum;
+    int index;
+    public Pair(int s, int i) {
+        sum = s;
+        index = i;
+    }
+}
+    
+public class Solution {
+    /**
+     * @param nums: A list of integers
+     * @return: A list of integers includes the index of the first number 
+     *          and the index of the last number
+     */
+    public int[] subarraySumClosest(int[] nums) {
+        int[] res = new int[2];
+        if (nums == null || nums.length == 0) {
+            return res;
+        } 
+        
+        int len = nums.length;
+        if(len == 1) {
+            res[0] = res[1] = 0;
+            return res;
+        }
+        Pair[] sums = new Pair[len+1];
+        int prev = 0;
+        sums[0] = new Pair(0, 0);
+        for (int i = 1; i <= len; i++) {
+            sums[i] = new Pair(prev + nums[i-1], i);
+            prev = sums[i].sum;
+        }
+        Arrays.sort(sums, new Comparator<Pair>() {
+           public int compare(Pair a, Pair b) {
+               return a.sum - b.sum;
+           } 
+        });
+        int ans = Integer.MAX_VALUE;
+        for (int i = 1; i <= len; i++) {
+            
+            if (ans > sums[i].sum - sums[i-1].sum) {
+                ans = sums[i].sum - sums[i-1].sum;
+                int[] temp = new int[]{sums[i].index - 1, sums[i - 1].index - 1};
+                Arrays.sort(temp);
+                res[0] = temp[0] + 1;
+                res[1] = temp[1];
+            }
+        }
+        
+        return res;
+    }
+}
