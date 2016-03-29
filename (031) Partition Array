@@ -1,0 +1,40 @@
+就是QuickSort的实现
+
+public class Solution {
+	/** 
+     *@param nums: The integer array you should partition
+     *@param k: As description
+     *return: The index after partition
+     */
+    public int partitionArray(int[] nums, int k) {
+	    //write your code here
+	    if(nums == null || nums.length == 0){
+            return 0;
+        }
+        
+        int i = 0;
+        int j = nums.length - 1;
+	    for(; i <= j; i++){
+	        if(nums[i]< k){
+	            continue;
+	        }
+	        
+	        while(j >= i && nums[j] >= k){
+	            j --;
+	        }//while
+	        
+	        //i points to a number >= k
+	        //j points to a number < k
+	        //swap i and j
+	        if(j >= 0 && i < j){
+	            int tmp = nums[i];
+    	        nums[i] = nums[j];
+    	        nums[j] = tmp;
+    	        j --;
+	        }
+	        
+	    }//for
+	    
+	    return j + 1;
+    }//partitionArray
+}
