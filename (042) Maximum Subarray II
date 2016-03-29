@@ -1,0 +1,53 @@
+题目：
+给定一个整数数组，找出两个不重叠子数组使得它们的和最大。
+每个子数组的数字在数组中的位置应该是连续的。
+返回最大的和。
+
+文／Jason_Yuan（简书作者）
+原文链接：http://www.jianshu.com/p/65c49a036331
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+解题思路:
+类似题是[Best Time to Buy and Sell Stock III]
+找两个区间，和最大，则一定存在一个分割线，分割线左右两边分别转化为求一个子数组最大，即[Maximum Subarray I]
+从左往右枚举一遍分割线求出Maximum Subarray，再从右往左枚举一遍分割线求出Maximum Subarray 这样时间复杂度是O(n)
+如果从左往右枚举一次分割线，每次左右分别求maximum Subarray，过程中是有浪费的，时间复杂度是O(n^2)
+
+left[i] 和 right[i+1] 就是以i为切割点，左子数组与右子数组的和，注意right数组的值也是顺序的，不是逆序的，
+因为right[]赋值时，是以同样的i--来赋值的，所以还是顺序的。
+
+public class Solution {
+    /**
+     * @param nums: A list of integers
+     * @return: An integer denotes the sum of max two non-overlapping subarrays
+     */
+    public int maxTwoSubArrays(ArrayList<Integer> nums) {
+        // write your code
+        int size = nums.size();
+        int[] left = new int[size];
+        int[] right = new int[size];
+        int sum = 0;
+        int minSum = 0;
+        int max = Integer.MIN_VALUE;
+        for(int i = 0; i < size; i++){
+            sum += nums.get(i);
+            max = Math.max(max, sum - minSum);
+            minSum = Math.min(sum, minSum);
+            left[i] = max;
+        }
+        sum = 0;
+        minSum = 0;
+        max = Integer.MIN_VALUE;
+        for(int i = size - 1; i >= 0; i--){
+            sum += nums.get(i);
+            max = Math.max(max, sum - minSum);
+            minSum = Math.min(sum, minSum);
+            right[i] = max;
+        }
+        max = Integer.MIN_VALUE;
+        for(int i = 0; i < size - 1; i++){
+            max = Math.max(max, left[i] + right[i + 1]);
+        }
+        return max;
+    }
+}
