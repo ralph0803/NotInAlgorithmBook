@@ -1,0 +1,48 @@
+题目：给定一个未排序的整数数组，找出最长连续序列的长度。
+
+文／Richardo92（简书作者）
+原文链接：http://www.jianshu.com/p/e6b955ca208f
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+Because it requires O(n) complexity, 
+we can not solve the problem by sorting the array first. 
+Sorting takes at least O(nlogn) time.
+We can use a HashSet to add and remove elements. HashSet is implemented by using a hash table. 
+Elements are not ordered. The add, remove and contains methods have constant time complexity O(1).
+After an element is checked, it should be removed from the set. 
+Otherwise, time complexity would be O(mn) in which m is the average length of all consecutive sequences.
+
+就是一个数组中每一个数，比它下的在数组中找找有没有，比它大的在数组中找找有没有，
+然后不断合并的过程。然后不断把已经探明过的值从HashSet中删除以避免重复探测。
+
+public class Solution {
+    /**
+     * @param nums: A list of integers
+     * @return an integer
+     */
+    public int longestConsecutive(int[] nums) {
+        HashSet<Integer> set = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            set.add(nums[i]);
+        }
+        
+        int longest = 0;
+        for (int i = 0; i < nums.length; i++) {
+            int down = nums[i] - 1;
+            while (set.contains(down)) {
+                set.remove(down);
+                down--;
+            }
+            
+            int up = nums[i] + 1;
+            while (set.contains(up)) {
+                set.remove(up);
+                up++;
+            }
+            
+            longest = Math.max(longest, up - down - 1);
+        }
+        
+        return longest;
+    }
+}
