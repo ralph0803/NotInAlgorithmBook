@@ -1,0 +1,107 @@
+文／程序员2点零（简书作者）
+原文链接：http://www.jianshu.com/p/54f9b653d1b5
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+文／Richardo92（简书作者）
+原文链接：http://www.jianshu.com/p/78cdc6e3048f
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+这道题目还是挺有意思的。一开始写出来超出时间了，没有怎么仔细分析。
+两个操作，
+get,
+set,最理想情况下都必须 O(1)
+因为当超过限度后，需要把最不常用的删除掉，所以，为了使时间复杂度最低，必须得用链表。
+
+后来，我很天真的来了一个O(n) 的解法，结果果然时间过多。天真解法很简单啊：
+一个map<key,value>存数值。一个queue<key>来存排位。每次有更新，就把最新的放在末尾；
+每次超过capaticity,就把大头干掉。很简单嘛，但是跑起来太久，失败了。
+
+于是就来了第二个做法。其实还是跟方法一是类似的。只不过用了一个特别的双向的LinkNode，
+有了head和tail，这样就大大加快了速度。主要加快的就是那个‘更新排位’的过程，
+过去我是O(n),现在O(1)就好了。具体看下面。
+
+解题思路:
+第一过程中涉及membership的查询 -> Hash Table
+第二过程中涉及一个个的增、删 -> Linked List (数组不适合，数组适合一批一批的增删)
+Linked List中的每个node要有next和prev属性，要同时记录Dummy(head)和tail
+
+巧妙点：
+head和tail特别巧妙：除掉头和尾，和加上头和尾，就都特别快。
+用双向的pointer: pre和next， 当需要除掉任何一个node的时候，只要知道要除掉哪一个，
+直接把node.pre和node.next耐心连起来就好了，node就自然而然的断开不要了。
+李特的这个Design的题目很有意思。果然值得被作为Hard。但是一旦知道怎么解决了，就不是很特别，因为并不是难想的算法。
+
+我们get操作时，通过HashMap的key来找到Node再返回他的value。
+然后再根据这个Node，将其从当前位置删除，移动到首结点位置。
+我们在进行set操作时，如果HashMap已经存在了这个key，那么直接修改原值，然后移动到链表头部。
+如果没有，则新建结点，插到头部。如果超过了限度，那么就把尾巴删除掉。记得先从哈希表中删除该键值对，再删除该结点（尾结点）。所以，Node里面必须要有key这个成员。然后再通过key去哈希表里面删除对应的键值对。
+这道题目就是得思考，get, set操作需要那几个原子级别的操作。
+然后发现需要HashMap, 和链表。然后需要有添加头结点，删除特定结点的操作。
+
+public class LRUCache {
+    private class Node{
+        Node prev;
+        Node next;
+        int key;
+        int value;
+
+        public Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+            this.prev = null;
+            this.next = null;
+        }
+    }
+
+    private int capacity;
+    private HashMap<Integer, Node> hs = new HashMap<Integer, Node>();
+    private Node head = new Node(-1, -1);
+    private Node tail = new Node(-1, -1);
+
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        tail.prev = head;
+        head.next = tail;
+    }
+
+    public int get(int key) {
+        if( !hs.containsKey(key)) {
+            return -1;
+        }
+
+        // remove current
+        Node current = hs.get(key);
+        current.prev.next = current.next;
+        current.next.prev = current.prev;
+
+        // move current to tail
+        move_to_tail(current);
+
+        return hs.get(key).value;
+    }
+
+    public void set(int key, int value) {
+        if( get(key) != -1) {
+            hs.get(key).value = value;
+            return;
+        }
+
+        if (hs.size() == capacity) {
+            hs.remove(head.next.key);
+            head.next = head.next.next;
+            head.next.prev = head;
+        }
+
+        Node insert = new Node(key, value);
+        hs.put(key, insert);
+        move_to_tail(insert);
+    }
+
+    private void move_to_tail(Node current) {
+        current.prev = tail.prev;
+        tail.prev = current;
+        current.prev.next = current;
+        current.next = tail;
+    }
+}
+
