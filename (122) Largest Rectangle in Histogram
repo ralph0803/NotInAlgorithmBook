@@ -1,0 +1,48 @@
+文／Jason_Yuan（简书作者）
+原文链接：http://www.jianshu.com/p/6bb0f620ed39
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+文／Richardo92（简书作者）
+原文链接：http://www.jianshu.com/p/1cb8091863d5
+著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。
+
+他的思路是什么呢？
+其实就是将数由小到大放进栈中。
+当碰到一个比栈顶数（当前最大数）小的数时，将栈中比该数大的数都pop出来，算面积。
+然后将该数压入栈中。也就说，栈中的数一直是从小到大排列的。
+然后碰到小的，就将比其大的pop出来，一个个算面积，然后求出最大面积。
+因为值大的不会和值小的构成矩形，只会和值大的构成矩形。
+所以比该数大的就全部pop出来。然后计算出来的面积是完整的。
+然后比该值小的数依旧存在栈里面，以后该数pop时，需要连同这些小的一起计算面积。
+
+核心原则是：
+小的不能和大的构成矩形算面积。
+大的可以和小的构成矩形算面积（切掉头上方那些多余部分）。
+
+解题思路:
+DP一般是把n!/n^n/2^n优化到n^2/n^3，而本题暴力解法是n^2，我们希望优化到n，不是DP的强项
+n^2 -> n （stack强项）!!!!
+求出把每个柱子当做最小的得到的面积 -> 求出n个值，取min
+通过维护一个升序stack，实现 -> 找到每个数左边第一个比它小的和右边第一个比它小的
+
+public class Solution {
+    public int largestRectangleArea(int[] height) {
+        if (height == null || height.length == 0) {
+            return 0;
+        }
+        
+        Stack<Integer> stack = new Stack<Integer>();
+        int max = 0;
+        for (int i = 0; i <= height.length; i++) {
+            int curt = (i == height.length) ? -1 : height[i];
+            while (!stack.isEmpty() && curt <= height[stack.peek()]) {
+                int h = height[stack.pop()];
+                int w = stack.isEmpty() ? i : i - stack.peek() - 1;
+                max = Math.max(max, h * w);
+            }
+            stack.push(i);
+        }
+        
+        return max;
+    }
+}
